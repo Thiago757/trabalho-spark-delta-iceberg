@@ -1,0 +1,49 @@
+# Ambiente virtual
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+*.so
+
+# Pytest / cobertura
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# MkDocs
+site/
+
+# Dados e logs (não versionar arquivos de dados brutos)
+data/
+logs/
+spark-warehouse/
+*.parquet
+*.csv
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Claude Code
+.claude/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# UV lockfile intermediário (manter uv.lock)
+# uv.lock  <- não ignorar, deve ser versionado
