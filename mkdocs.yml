@@ -1,0 +1,44 @@
+site_name: Spark, Delta Lake e Apache Iceberg
+site_description: "Trabalho acadêmico — Engenharia de Dados — SATC 5ª Fase"
+
+theme:
+  name: material
+  language: pt-BR
+  palette:
+    - scheme: default
+      primary: deep-orange
+      accent: orange
+      toggle:
+        icon: material/brightness-7
+        name: Modo escuro
+    - scheme: slate
+      primary: deep-orange
+      accent: orange
+      toggle:
+        icon: material/brightness-4
+        name: Modo claro
+  features:
+    - navigation.tabs
+    - navigation.top
+    - content.code.copy
+    - search.highlight
+
+nav:
+  - Contextualização: index.md
+  - Apache Spark (PySpark): spark.md
+  - Delta Lake: delta.md
+  - Apache Iceberg: iceberg.md
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      use_pygments: true
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+
+plugins:
+  - search:
+      lang: pt
