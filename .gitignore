@@ -47,3 +47,6 @@ Thumbs.db
 
 # UV lockfile intermediário (manter uv.lock)
 # uv.lock  <- não ignorar, deve ser versionado
+
+# Guia local de apresentação (não vai para o GitHub)
+GUIA_APRESENTACAO.md
