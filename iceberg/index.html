@@ -1,0 +1,1140 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Trabalho acadêmico — Engenharia de Dados — SATC 5ª Fase">
+      
+      
+      
+      
+        <link rel="prev" href="../delta/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Apache Iceberg - Spark, Delta Lake e Apache Iceberg</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#apache-iceberg" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href=".." title="Spark, Delta Lake e Apache Iceberg" class="md-header__button md-logo" aria-label="Spark, Delta Lake e Apache Iceberg" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Spark, Delta Lake e Apache Iceberg
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Apache Iceberg
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="orange"  aria-label="Modo escuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Modo escuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-orange" data-md-color-accent="orange"  aria-label="Modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando busca
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Abas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Contextualização
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../spark/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Apache Spark (PySpark)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../delta/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Delta Lake
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Apache Iceberg
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Spark, Delta Lake e Apache Iceberg" class="md-nav__button md-logo" aria-label="Spark, Delta Lake e Apache Iceberg" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Spark, Delta Lake e Apache Iceberg
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contextualização
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../spark/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Apache Spark (PySpark)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../delta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Delta Lake
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Apache Iceberg
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Apache Iceberg
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#o-que-e-o-apache-iceberg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que é o Apache Iceberg?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#por-que-o-iceberg-foi-criado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por que o Iceberg foi criado?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arquitetura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arquitetura
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#principais-recursos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Principais Recursos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Principais Recursos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#acid-transactions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACID Transactions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evolucao-de-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evolução de Schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#particionamento-oculto-hidden-partitioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Particionamento Oculto (Hidden Partitioning)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#time-travel-snapshots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time Travel (Snapshots)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quando-o-iceberg-se-destaca" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quando o Iceberg se destaca
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuracao-com-pyspark" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuração com PySpark
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operacoes-com-namespace-e-tabelas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operações com Namespace e Tabelas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#merge-upsert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MERGE (Upsert)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparacao-iceberg-vs-delta-lake" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparação: Iceberg vs Delta Lake
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#versao-utilizada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Versão Utilizada
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitacoes-e-cuidados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitações e Cuidados
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#o-que-e-o-apache-iceberg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que é o Apache Iceberg?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#por-que-o-iceberg-foi-criado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por que o Iceberg foi criado?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arquitetura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arquitetura
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#principais-recursos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Principais Recursos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Principais Recursos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#acid-transactions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACID Transactions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evolucao-de-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evolução de Schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#particionamento-oculto-hidden-partitioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Particionamento Oculto (Hidden Partitioning)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#time-travel-snapshots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time Travel (Snapshots)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quando-o-iceberg-se-destaca" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quando o Iceberg se destaca
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuracao-com-pyspark" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuração com PySpark
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operacoes-com-namespace-e-tabelas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operações com Namespace e Tabelas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#merge-upsert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MERGE (Upsert)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparacao-iceberg-vs-delta-lake" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparação: Iceberg vs Delta Lake
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#versao-utilizada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Versão Utilizada
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitacoes-e-cuidados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitações e Cuidados
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="apache-iceberg">Apache Iceberg<a class="headerlink" href="#apache-iceberg" title="Permanent link">&para;</a></h1>
+<h2 id="o-que-e-o-apache-iceberg">O que é o Apache Iceberg?<a class="headerlink" href="#o-que-e-o-apache-iceberg" title="Permanent link">&para;</a></h2>
+<p>O <strong>Apache Iceberg</strong> é um formato de tabela open-source de alto desempenho para grandes conjuntos de dados analíticos. Foi criado pela <strong>Netflix</strong> em 2017 e doado à Apache Software Foundation em 2018. Hoje é mantido por grandes empresas como Apple, Netflix, Airbnb e AWS.</p>
+<div class="admonition tip">
+<p class="admonition-title">Open Table Format</p>
+<p>Iceberg é um <strong>Open Table Format (OTF)</strong> — uma camada de metadados que organiza arquivos de dados (Parquet, ORC, Avro) em tabelas com suporte a ACID, evolução de schema e time travel.</p>
+</div>
+<hr />
+<h2 id="por-que-o-iceberg-foi-criado">Por que o Iceberg foi criado?<a class="headerlink" href="#por-que-o-iceberg-foi-criado" title="Permanent link">&para;</a></h2>
+<p>A Netflix enfrentava problemas sérios com tabelas Hive em escala petabyte:</p>
+<ul>
+<li><strong>Falta de ACID</strong>: operações concorrentes corrompiam dados</li>
+<li><strong>Sem evolução de schema segura</strong>: adicionar colunas causava falhas</li>
+<li><strong>Listagem de partições lenta</strong>: varredura completa do S3/HDFS</li>
+<li><strong>Sem time travel</strong>: impossível recuperar estado anterior</li>
+</ul>
+<p>O Iceberg foi criado para resolver todos esses problemas.</p>
+<hr />
+<h2 id="arquitetura">Arquitetura<a class="headerlink" href="#arquitetura" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>graph TD
+    Catalog[&quot;📚 Catalog\n(Hadoop / Hive / Glue / REST)&quot;]
+    Meta[&quot;📄 Metadata File\n(metadata.json)&quot;]
+    Manifest[&quot;📋 Manifest List\n(.avro)&quot;]
+    ManifestFile[&quot;📋 Manifest Files\n(.avro)&quot;]
+    Data[&quot;🗃️ Data Files\n(.parquet / .orc / .avro)&quot;]
+
+    Catalog --&gt; Meta
+    Meta --&gt; Manifest
+    Manifest --&gt; ManifestFile
+    ManifestFile --&gt; Data
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Camada</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Catalog</strong></td>
+<td>Aponta para o metadata file atual da tabela</td>
+</tr>
+<tr>
+<td><strong>Metadata File</strong></td>
+<td>JSON com schema, partições e ponteiros para manifest lists</td>
+</tr>
+<tr>
+<td><strong>Manifest List</strong></td>
+<td>Lista de manifest files de um snapshot</td>
+</tr>
+<tr>
+<td><strong>Manifest File</strong></td>
+<td>Lista de data files com estatísticas (min/max, contagem)</td>
+</tr>
+<tr>
+<td><strong>Data Files</strong></td>
+<td>Arquivos reais com os dados (Parquet por padrão)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="principais-recursos">Principais Recursos<a class="headerlink" href="#principais-recursos" title="Permanent link">&para;</a></h2>
+<h3 id="acid-transactions">ACID Transactions<a class="headerlink" href="#acid-transactions" title="Permanent link">&para;</a></h3>
+<p>O Iceberg garante <strong>atomicidade, consistência, isolamento e durabilidade</strong> em operações DML:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- INSERT: cria novo snapshot atomicamente</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="k">local</span><span class="p">.</span><span class="n">vendas</span><span class="p">.</span><span class="n">pedidos</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;2024-02-01&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;processando&#39;</span><span class="p">);</span>
+
+<span class="c1">-- UPDATE: cria novos arquivos, snapshot aponta para versão nova</span>
+<span class="k">UPDATE</span><span class="w"> </span><span class="k">local</span><span class="p">.</span><span class="n">vendas</span><span class="p">.</span><span class="n">pedidos</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;entregue&#39;</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">6</span><span class="p">;</span>
+
+<span class="c1">-- DELETE: remove registros sem reescrever toda a tabela</span>
+<span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="k">local</span><span class="p">.</span><span class="n">vendas</span><span class="p">.</span><span class="n">pedidos</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;cancelado&#39;</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="evolucao-de-schema">Evolução de Schema<a class="headerlink" href="#evolucao-de-schema" title="Permanent link">&para;</a></h3>
+<p>Adicione, renomeie ou remova colunas sem recriar a tabela:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- Adicionar coluna</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">local</span><span class="p">.</span><span class="n">vendas</span><span class="p">.</span><span class="n">clientes</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="n">telefone</span><span class="w"> </span><span class="n">STRING</span><span class="p">;</span>
+
+<span class="c1">-- Renomear coluna (não suportado em Delta)</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">local</span><span class="p">.</span><span class="n">vendas</span><span class="p">.</span><span class="n">clientes</span><span class="w"> </span><span class="k">RENAME</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="n">telefone</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">celular</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="particionamento-oculto-hidden-partitioning">Particionamento Oculto (Hidden Partitioning)<a class="headerlink" href="#particionamento-oculto-hidden-partitioning" title="Permanent link">&para;</a></h3>
+<p>O Iceberg gerencia partições internamente, sem que o usuário precise conhecer a estrutura:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- Sem Iceberg (Hive): precisa especificar a partição</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">pedidos</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="k">year</span><span class="p">(</span><span class="n">data_pedido</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2024</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="k">month</span><span class="p">(</span><span class="n">data_pedido</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="c1">-- Com Iceberg: basta filtrar normalmente</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="k">local</span><span class="p">.</span><span class="n">vendas</span><span class="p">.</span><span class="n">pedidos</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">data_pedido</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="s1">&#39;2024-01-01&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="s1">&#39;2024-01-31&#39;</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="time-travel-snapshots">Time Travel (Snapshots)<a class="headerlink" href="#time-travel-snapshots" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Listar todos os snapshots</span>
+<span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM local.vendas.clientes.snapshots&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">truncate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Ler versão anterior por snapshot_id</span>
+<span class="n">spark</span><span class="o">.</span><span class="n">read</span> \
+    <span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;snapshot-id&quot;</span><span class="p">,</span> <span class="mi">1234567890</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s2">&quot;local.vendas.clientes&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Ler por timestamp</span>
+<span class="n">spark</span><span class="o">.</span><span class="n">read</span> \
+    <span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;as-of-timestamp&quot;</span><span class="p">,</span> <span class="s2">&quot;2024-01-10 12:00:00&quot;</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s2">&quot;local.vendas.clientes&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="quando-o-iceberg-se-destaca">Quando o Iceberg se destaca<a class="headerlink" href="#quando-o-iceberg-se-destaca" title="Permanent link">&para;</a></h3>
+<ul>
+<li>quando múltiplas engines precisam ler a mesma tabela</li>
+<li>quando governança e portabilidade são prioridades</li>
+<li>quando o particionamento precisa ser mais transparente para quem consulta os dados</li>
+</ul>
+<hr />
+<h2 id="configuracao-com-pyspark">Configuração com PySpark<a class="headerlink" href="#configuracao-com-pyspark" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparkSession</span>
+
+<span class="n">spark</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">SparkSession</span><span class="o">.</span><span class="n">builder</span>
+    <span class="o">.</span><span class="n">appName</span><span class="p">(</span><span class="s2">&quot;IcebergLocalDevelopment&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">config</span><span class="p">(</span>
+        <span class="s2">&quot;spark.jars.packages&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.6.1&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">config</span><span class="p">(</span>
+        <span class="s2">&quot;spark.sql.extensions&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">&quot;spark.sql.catalog.local&quot;</span><span class="p">,</span> <span class="s2">&quot;org.apache.iceberg.spark.SparkCatalog&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">&quot;spark.sql.catalog.local.type&quot;</span><span class="p">,</span> <span class="s2">&quot;hadoop&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">&quot;spark.sql.catalog.local.warehouse&quot;</span><span class="p">,</span> <span class="s2">&quot;spark-warehouse/iceberg&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="operacoes-com-namespace-e-tabelas">Operações com Namespace e Tabelas<a class="headerlink" href="#operacoes-com-namespace-e-tabelas" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="c1">-- Criar namespace (schema)</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="n">NAMESPACE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="k">local</span><span class="p">.</span><span class="n">vendas</span><span class="p">;</span>
+
+<span class="c1">-- Criar tabela</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="k">local</span><span class="p">.</span><span class="n">vendas</span><span class="p">.</span><span class="n">clientes</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w">     </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">nome</span><span class="w">   </span><span class="n">STRING</span><span class="p">,</span>
+<span class="w">    </span><span class="n">email</span><span class="w">  </span><span class="n">STRING</span>
+<span class="p">)</span><span class="w"> </span><span class="k">USING</span><span class="w"> </span><span class="n">iceberg</span><span class="p">;</span>
+
+<span class="c1">-- Listar tabelas</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">TABLES</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="k">local</span><span class="p">.</span><span class="n">vendas</span><span class="p">;</span>
+</code></pre></div>
+<hr />
+<h2 id="merge-upsert">MERGE (Upsert)<a class="headerlink" href="#merge-upsert" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="n">MERGE</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="k">local</span><span class="p">.</span><span class="n">vendas</span><span class="p">.</span><span class="n">clientes</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">target</span>
+<span class="k">USING</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="k">SELECT</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Novo Cliente&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">nome</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;novo@email.com&#39;</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">email</span>
+<span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">source</span>
+<span class="k">ON</span><span class="w"> </span><span class="n">target</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">source</span><span class="p">.</span><span class="n">id</span>
+<span class="k">WHEN</span><span class="w"> </span><span class="n">MATCHED</span><span class="w"> </span><span class="k">THEN</span>
+<span class="w">    </span><span class="k">UPDATE</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">nome</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">source</span><span class="p">.</span><span class="n">nome</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">source</span><span class="p">.</span><span class="n">email</span>
+<span class="k">WHEN</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="n">MATCHED</span><span class="w"> </span><span class="k">THEN</span>
+<span class="w">    </span><span class="k">INSERT</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">nome</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="k">source</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="k">source</span><span class="p">.</span><span class="n">nome</span><span class="p">,</span><span class="w"> </span><span class="k">source</span><span class="p">.</span><span class="n">email</span><span class="p">);</span>
+</code></pre></div>
+<hr />
+<h2 id="comparacao-iceberg-vs-delta-lake">Comparação: Iceberg vs Delta Lake<a class="headerlink" href="#comparacao-iceberg-vs-delta-lake" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Característica</th>
+<th>Apache Iceberg</th>
+<th>Delta Lake</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Criador</td>
+<td>Netflix / Apple</td>
+<td>Databricks</td>
+</tr>
+<tr>
+<td>Licença</td>
+<td>Apache 2.0</td>
+<td>Apache 2.0</td>
+</tr>
+<tr>
+<td>Engines</td>
+<td>Spark, Flink, Trino, Dremio</td>
+<td>Principalmente Spark</td>
+</tr>
+<tr>
+<td>Catálogo</td>
+<td>Hive, Glue, REST, Nessie</td>
+<td>spark_catalog</td>
+</tr>
+<tr>
+<td>Time Travel</td>
+<td>Snapshots (snapshot-id / timestamp)</td>
+<td>Transaction Log (versionAsOf)</td>
+</tr>
+<tr>
+<td>Schema Evolution</td>
+<td>Avançada (rename, reorder)</td>
+<td>Básica (add)</td>
+</tr>
+<tr>
+<td>Hidden Partitioning</td>
+<td>✅ Sim</td>
+<td>❌ Não</td>
+</tr>
+<tr>
+<td>Iceberg REST Catalog</td>
+<td>✅ Sim</td>
+<td>❌ Não</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="versao-utilizada">Versão Utilizada<a class="headerlink" href="#versao-utilizada" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.6.1
+</code></pre></div>
+<p>Compatível com <strong>PySpark 3.5.x</strong> e <strong>Scala 2.12</strong>.</p>
+<hr />
+<h2 id="limitacoes-e-cuidados">Limitações e Cuidados<a class="headerlink" href="#limitacoes-e-cuidados" title="Permanent link">&para;</a></h2>
+<ul>
+<li>A configuração inicial costuma ser mais detalhada do que em Delta Lake</li>
+<li>Catálogos e metadados exigem maior entendimento arquitetural da equipe</li>
+<li>Em projetos pequenos e puramente locais, parte do poder do Iceberg pode ficar subutilizada</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Voltar para o topo
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.top", "content.code.copy", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
