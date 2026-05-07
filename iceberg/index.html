@@ -871,18 +871,17 @@
 <p>O Iceberg foi criado para resolver todos esses problemas.</p>
 <hr />
 <h2 id="arquitetura">Arquitetura<a class="headerlink" href="#arquitetura" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>graph TD
-    Catalog[&quot;📚 Catalog\n(Hadoop / Hive / Glue / REST)&quot;]
-    Meta[&quot;📄 Metadata File\n(metadata.json)&quot;]
-    Manifest[&quot;📋 Manifest List\n(.avro)&quot;]
-    ManifestFile[&quot;📋 Manifest Files\n(.avro)&quot;]
-    Data[&quot;🗃️ Data Files\n(.parquet / .orc / .avro)&quot;]
+<pre class="mermaid"><code>graph TD
+    Catalog["📚 Catalog\n(Hadoop / Hive / Glue / REST)"]
+    Meta["📄 Metadata File\n(metadata.json)"]
+    Manifest["📋 Manifest List\n(.avro)"]
+    ManifestFile["📋 Manifest Files\n(.avro)"]
+    Data["🗃️ Data Files\n(.parquet / .orc / .avro)"]
 
     Catalog --&gt; Meta
     Meta --&gt; Manifest
     Manifest --&gt; ManifestFile
-    ManifestFile --&gt; Data
-</code></pre></div>
+    ManifestFile --&gt; Data</code></pre>
 <table>
 <thead>
 <tr>

@@ -975,20 +975,19 @@
 </div>
 <hr />
 <h2 id="arquitetura">Arquitetura<a class="headerlink" href="#arquitetura" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>graph TD
-    Table[&quot;🗃️ Delta Table&quot;]
-    Log[&quot;📋 _delta_log/\n(Transaction Log)&quot;]
-    V0[&quot;000...0.json\nversão 0&quot;]
-    V1[&quot;000...1.json\nversão 1&quot;]
-    V2[&quot;000...2.json\nversão 2&quot;]
-    Parquet[&quot;🗃️ Arquivos Parquet\n(dados reais)&quot;]
+<pre class="mermaid"><code>graph TD
+    Table["🗃️ Delta Table"]
+    Log["📋 _delta_log/\n(Transaction Log)"]
+    V0["000...0.json\nversão 0"]
+    V1["000...1.json\nversão 1"]
+    V2["000...2.json\nversão 2"]
+    Parquet["🗃️ Arquivos Parquet\n(dados reais)"]
 
     Table --&gt; Log
     Table --&gt; Parquet
     Log --&gt; V0
     Log --&gt; V1
-    Log --&gt; V2
-</code></pre></div>
+    Log --&gt; V2</code></pre>
 <h3 id="transaction-log">Transaction Log<a class="headerlink" href="#transaction-log" title="Permanent link">&para;</a></h3>
 <p>Cada operação gera um arquivo JSON no <code>_delta_log/</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// 00000000000000000000.json (versão 0 - CREATE TABLE)</span>

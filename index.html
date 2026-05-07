@@ -856,7 +856,7 @@
 
 <h1 id="contexto-do-trabalho">Contexto do Trabalho<a class="headerlink" href="#contexto-do-trabalho" title="Permanent link">&para;</a></h1>
 <h2 id="sobre-o-projeto">Sobre o Projeto<a class="headerlink" href="#sobre-o-projeto" title="Permanent link">&para;</a></h2>
-<p>Este trabalho de pesquisa foi desenvolvido para a disciplina de <strong>Arquitetura de Dados</strong> do curso de <strong>Engenharia de Software (5ª Fase)</strong> da SATC, explorando o uso do <strong>Apache Spark</strong> com os formatos de tabela open-source <strong>Delta Lake</strong> e <strong>Apache Iceberg</strong>.</p>
+<p>Este trabalho de pesquisa foi desenvolvido para a disciplina de <strong>Engenharia de Dados</strong> do curso de <strong>Engenharia de Software (5ª Fase)</strong> da SATC, explorando o uso do <strong>Apache Spark</strong> com os formatos de tabela open-source <strong>Delta Lake</strong> e <strong>Apache Iceberg</strong>.</p>
 <p>O objetivo é demonstrar operações CRUD (INSERT, UPDATE, DELETE) e recursos avançados como <strong>Time Travel</strong> e <strong>evolução de schema</strong> em um Data Lake local usando PySpark.</p>
 <h3 id="objetivos-especificos">Objetivos específicos<a class="headerlink" href="#objetivos-especificos" title="Permanent link">&para;</a></h3>
 <ul>
@@ -868,19 +868,18 @@
 <hr />
 <h2 id="escopo-da-demonstracao">Escopo da Demonstração<a class="headerlink" href="#escopo-da-demonstracao" title="Permanent link">&para;</a></h2>
 <p>Durante a apresentação, o foco do projeto é mostrar o seguinte fluxo:</p>
-<div class="highlight"><pre><span></span><code>flowchart LR
-    Dados[&quot;Dados da TechStore&quot;] --&gt; Spark[&quot;Apache Spark (PySpark)&quot;]
-    Spark --&gt; Delta[&quot;Tabela Delta Lake&quot;]
-    Spark --&gt; Iceberg[&quot;Tabela Apache Iceberg&quot;]
-    Delta --&gt; Operacoes[&quot;INSERT / UPDATE / DELETE / MERGE&quot;]
+<pre class="mermaid"><code>flowchart LR
+    Dados["Dados da TechStore"] --&gt; Spark["Apache Spark (PySpark)"]
+    Spark --&gt; Delta["Tabela Delta Lake"]
+    Spark --&gt; Iceberg["Tabela Apache Iceberg"]
+    Delta --&gt; Operacoes["INSERT / UPDATE / DELETE / MERGE"]
     Iceberg --&gt; Operacoes
-    Operacoes --&gt; Historico[&quot;Time Travel e histórico&quot;]
-</code></pre></div>
+    Operacoes --&gt; Historico["Time Travel e histórico"]</code></pre>
 <hr />
 <h2 id="cenario-techstore">Cenário — TechStore<a class="headerlink" href="#cenario-techstore" title="Permanent link">&para;</a></h2>
 <p>Utilizamos um sistema de gestão de vendas fictício de uma loja de eletrônicos chamada <strong>TechStore</strong>, contendo três entidades principais.</p>
 <h3 id="modelo-entidade-relacionamento-er">Modelo Entidade-Relacionamento (ER)<a class="headerlink" href="#modelo-entidade-relacionamento-er" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>erDiagram
+<pre class="mermaid"><code>erDiagram
     CLIENTES {
         int id PK
         string nome
@@ -904,69 +903,70 @@
         string data_pedido
         string status
     }
-    CLIENTES ||--o{ PEDIDOS : &quot;realiza&quot;
-    PRODUTOS ||--o{ PEDIDOS : &quot;contém&quot;
-</code></pre></div>
+    CLIENTES ||--o{ PEDIDOS : "realiza"
+    PRODUTOS ||--o{ PEDIDOS : "contém"</code></pre>
 <hr />
 <h2 id="ddl-definicao-das-tabelas">DDL — Definição das Tabelas<a class="headerlink" href="#ddl-definicao-das-tabelas" title="Permanent link">&para;</a></h2>
-<p>=== "Delta Lake"</p>
-<div class="highlight"><pre><span></span><code>```sql
-CREATE TABLE IF NOT EXISTS clientes (
-    id       INT,
-    nome     STRING,
-    email    STRING,
-    cidade   STRING,
-    estado   STRING
-) USING delta;
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Delta Lake</label><label for="__tabbed_1_2">Apache Iceberg</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">clientes</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w">       </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">nome</span><span class="w">     </span><span class="n">STRING</span><span class="p">,</span>
+<span class="w">    </span><span class="n">email</span><span class="w">    </span><span class="n">STRING</span><span class="p">,</span>
+<span class="w">    </span><span class="n">cidade</span><span class="w">   </span><span class="n">STRING</span><span class="p">,</span>
+<span class="w">    </span><span class="n">estado</span><span class="w">   </span><span class="n">STRING</span>
+<span class="p">)</span><span class="w"> </span><span class="k">USING</span><span class="w"> </span><span class="n">delta</span><span class="p">;</span>
 
-CREATE TABLE IF NOT EXISTS produtos (
-    id        INT,
-    nome      STRING,
-    categoria STRING,
-    preco     FLOAT,
-    estoque   INT
-) USING delta;
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">produtos</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w">        </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">nome</span><span class="w">      </span><span class="n">STRING</span><span class="p">,</span>
+<span class="w">    </span><span class="n">categoria</span><span class="w"> </span><span class="n">STRING</span><span class="p">,</span>
+<span class="w">    </span><span class="n">preco</span><span class="w">     </span><span class="nb">FLOAT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">estoque</span><span class="w">   </span><span class="nb">INT</span>
+<span class="p">)</span><span class="w"> </span><span class="k">USING</span><span class="w"> </span><span class="n">delta</span><span class="p">;</span>
 
-CREATE TABLE IF NOT EXISTS pedidos (
-    id           INT,
-    cliente_id   INT,
-    produto_id   INT,
-    quantidade   INT,
-    data_pedido  STRING,
-    status       STRING
-) USING delta;
-```
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">pedidos</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w">           </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">cliente_id</span><span class="w">   </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">produto_id</span><span class="w">   </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">quantidade</span><span class="w">   </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">data_pedido</span><span class="w">  </span><span class="n">STRING</span><span class="p">,</span>
+<span class="w">    </span><span class="n">status</span><span class="w">       </span><span class="n">STRING</span>
+<span class="p">)</span><span class="w"> </span><span class="k">USING</span><span class="w"> </span><span class="n">delta</span><span class="p">;</span>
 </code></pre></div>
-<p>=== "Apache Iceberg"</p>
-<div class="highlight"><pre><span></span><code>```sql
-CREATE NAMESPACE IF NOT EXISTS local.vendas;
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="n">NAMESPACE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="k">local</span><span class="p">.</span><span class="n">vendas</span><span class="p">;</span>
 
-CREATE TABLE IF NOT EXISTS local.vendas.clientes (
-    id      INT,
-    nome    STRING,
-    email   STRING,
-    cidade  STRING,
-    estado  STRING
-) USING iceberg;
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="k">local</span><span class="p">.</span><span class="n">vendas</span><span class="p">.</span><span class="n">clientes</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w">      </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">nome</span><span class="w">    </span><span class="n">STRING</span><span class="p">,</span>
+<span class="w">    </span><span class="n">email</span><span class="w">   </span><span class="n">STRING</span><span class="p">,</span>
+<span class="w">    </span><span class="n">cidade</span><span class="w">  </span><span class="n">STRING</span><span class="p">,</span>
+<span class="w">    </span><span class="n">estado</span><span class="w">  </span><span class="n">STRING</span>
+<span class="p">)</span><span class="w"> </span><span class="k">USING</span><span class="w"> </span><span class="n">iceberg</span><span class="p">;</span>
 
-CREATE TABLE IF NOT EXISTS local.vendas.produtos (
-    id        INT,
-    nome      STRING,
-    categoria STRING,
-    preco     FLOAT,
-    estoque   INT
-) USING iceberg;
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="k">local</span><span class="p">.</span><span class="n">vendas</span><span class="p">.</span><span class="n">produtos</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w">        </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">nome</span><span class="w">      </span><span class="n">STRING</span><span class="p">,</span>
+<span class="w">    </span><span class="n">categoria</span><span class="w"> </span><span class="n">STRING</span><span class="p">,</span>
+<span class="w">    </span><span class="n">preco</span><span class="w">     </span><span class="nb">FLOAT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">estoque</span><span class="w">   </span><span class="nb">INT</span>
+<span class="p">)</span><span class="w"> </span><span class="k">USING</span><span class="w"> </span><span class="n">iceberg</span><span class="p">;</span>
 
-CREATE TABLE IF NOT EXISTS local.vendas.pedidos (
-    id          INT,
-    cliente_id  INT,
-    produto_id  INT,
-    quantidade  INT,
-    data_pedido STRING,
-    status      STRING
-) USING iceberg;
-```
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="k">local</span><span class="p">.</span><span class="n">vendas</span><span class="p">.</span><span class="n">pedidos</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w">          </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">cliente_id</span><span class="w">  </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">produto_id</span><span class="w">  </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">quantidade</span><span class="w">  </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">data_pedido</span><span class="w"> </span><span class="n">STRING</span><span class="p">,</span>
+<span class="w">    </span><span class="n">status</span><span class="w">      </span><span class="n">STRING</span>
+<span class="p">)</span><span class="w"> </span><span class="k">USING</span><span class="w"> </span><span class="n">iceberg</span><span class="p">;</span>
 </code></pre></div>
+</div>
+</div>
+</div>
 <hr />
 <h2 id="operacoes-dml">Operações DML<a class="headerlink" href="#operacoes-dml" title="Permanent link">&para;</a></h2>
 <h3 id="insert">INSERT<a class="headerlink" href="#insert" title="Permanent link">&para;</a></h3>

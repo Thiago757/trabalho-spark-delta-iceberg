@@ -787,18 +787,17 @@
 </div>
 <hr />
 <h2 id="arquitetura">Arquitetura<a class="headerlink" href="#arquitetura" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>graph TD
-    Driver[&quot;🖥️ Driver Program\n(SparkContext / SparkSession)&quot;]
-    CM[&quot;Cluster Manager\n(Local / YARN / K8s)&quot;]
-    E1[&quot;⚙️ Executor 1\nTask | Task&quot;]
-    E2[&quot;⚙️ Executor 2\nTask | Task&quot;]
-    E3[&quot;⚙️ Executor 3\nTask | Task&quot;]
+<pre class="mermaid"><code>graph TD
+    Driver["🖥️ Driver Program\n(SparkContext / SparkSession)"]
+    CM["Cluster Manager\n(Local / YARN / K8s)"]
+    E1["⚙️ Executor 1\nTask | Task"]
+    E2["⚙️ Executor 2\nTask | Task"]
+    E3["⚙️ Executor 3\nTask | Task"]
 
     Driver --&gt; CM
     CM --&gt; E1
     CM --&gt; E2
-    CM --&gt; E3
-</code></pre></div>
+    CM --&gt; E3</code></pre>
 <table>
 <thead>
 <tr>
@@ -909,40 +908,42 @@ uv<span class="w"> </span>add<span class="w"> </span><span class="nv">pyspark</s
 </code></pre></div>
 <hr />
 <h2 id="configuracao-com-delta-lake-e-iceberg">Configuração com Delta Lake e Iceberg<a class="headerlink" href="#configuracao-com-delta-lake-e-iceberg" title="Permanent link">&para;</a></h2>
-<p>=== "Delta Lake"</p>
-<div class="highlight"><pre><span></span><code>```python
-from pyspark.sql import SparkSession
-from delta import *
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Delta Lake</label><label for="__tabbed_1_2">Apache Iceberg</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparkSession</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">delta</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 
-spark = (
-    SparkSession.builder
-    .master(&quot;local[*]&quot;)
-    .config(&quot;spark.jars.packages&quot;, &quot;io.delta:delta-spark_2.12:3.2.0&quot;)
-    .config(&quot;spark.sql.extensions&quot;, &quot;io.delta.sql.DeltaSparkSessionExtension&quot;)
-    .config(&quot;spark.sql.catalog.spark_catalog&quot;,
-            &quot;org.apache.spark.sql.delta.catalog.DeltaCatalog&quot;)
-    .getOrCreate()
-)
-```
+<span class="n">spark</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">SparkSession</span><span class="o">.</span><span class="n">builder</span>
+    <span class="o">.</span><span class="n">master</span><span class="p">(</span><span class="s2">&quot;local[*]&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">&quot;spark.jars.packages&quot;</span><span class="p">,</span> <span class="s2">&quot;io.delta:delta-spark_2.12:3.2.0&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">&quot;spark.sql.extensions&quot;</span><span class="p">,</span> <span class="s2">&quot;io.delta.sql.DeltaSparkSessionExtension&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">&quot;spark.sql.catalog.spark_catalog&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;org.apache.spark.sql.delta.catalog.DeltaCatalog&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+<span class="p">)</span>
 </code></pre></div>
-<p>=== "Apache Iceberg"</p>
-<div class="highlight"><pre><span></span><code>```python
-from pyspark.sql import SparkSession
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparkSession</span>
 
-spark = (
-    SparkSession.builder
-    .appName(&quot;IcebergApp&quot;)
-    .config(&quot;spark.jars.packages&quot;,
-            &quot;org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.6.1&quot;)
-    .config(&quot;spark.sql.extensions&quot;,
-            &quot;org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions&quot;)
-    .config(&quot;spark.sql.catalog.local&quot;, &quot;org.apache.iceberg.spark.SparkCatalog&quot;)
-    .config(&quot;spark.sql.catalog.local.type&quot;, &quot;hadoop&quot;)
-    .config(&quot;spark.sql.catalog.local.warehouse&quot;, &quot;spark-warehouse/iceberg&quot;)
-    .getOrCreate()
-)
-```
+<span class="n">spark</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">SparkSession</span><span class="o">.</span><span class="n">builder</span>
+    <span class="o">.</span><span class="n">appName</span><span class="p">(</span><span class="s2">&quot;IcebergApp&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">&quot;spark.jars.packages&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.6.1&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">&quot;spark.sql.extensions&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">&quot;spark.sql.catalog.local&quot;</span><span class="p">,</span> <span class="s2">&quot;org.apache.iceberg.spark.SparkCatalog&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">&quot;spark.sql.catalog.local.type&quot;</span><span class="p">,</span> <span class="s2">&quot;hadoop&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">&quot;spark.sql.catalog.local.warehouse&quot;</span><span class="p">,</span> <span class="s2">&quot;spark-warehouse/iceberg&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+<span class="p">)</span>
 </code></pre></div>
+</div>
+</div>
+</div>
 <hr />
 <h2 id="versoes-utilizadas">Versões Utilizadas<a class="headerlink" href="#versoes-utilizadas" title="Permanent link">&para;</a></h2>
 <table>
